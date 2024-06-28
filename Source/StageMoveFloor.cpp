@@ -20,7 +20,7 @@ StageMoveFloor::~StageMoveFloor()
 void StageMoveFloor::Update(float elapsedTime)
 {
 	//前回の情報を保存 
-	oldTransform = transform;
+	oldTransform = moveFloor_transform;
 	oldAngle = angle;
 
 	//ステージからゴールまでの距離を算出する
@@ -69,7 +69,7 @@ void StageMoveFloor::Update(float elapsedTime)
 void StageMoveFloor::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
 	//表示用のためワールド行列に更新する
-	model->UpdateTransform(transform);
+	model->UpdateTransform(moveFloor_transform);
 	shader->Draw(dc, model);
 }
 
@@ -97,7 +97,7 @@ bool StageMoveFloor::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFL
 		
 		
 		DirectX::XMVECTOR hitPosint = DirectX::XMLoadFloat3(&localHit.position);
-		hitPosint = DirectX::XMVector3TransformCoord(hitPosint, DirectX::XMLoadFloat4x4(&transform));
+		hitPosint = DirectX::XMVector3TransformCoord(hitPosint, DirectX::XMLoadFloat4x4(&moveFloor_transform));
 		
 		//変換された交点を格納
 		DirectX::XMStoreFloat3(&hit.position, hitPosint);
@@ -122,5 +122,5 @@ void StageMoveFloor::UpdateTransform()
 	DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
 	DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
 	DirectX::XMMATRIX W = S * R * T;
-	DirectX::XMStoreFloat4x4(&transform, W);
+	DirectX::XMStoreFloat4x4(&moveFloor_transform, W);
 }

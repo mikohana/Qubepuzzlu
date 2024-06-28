@@ -38,7 +38,7 @@ private:
 	DirectX::XMFLOAT3 scale = { 1,1,1 };
 	DirectX::XMFLOAT3 oldAngle = { 0,0,0 };
 	//ïœä∑çsóÒ44
-	DirectX::XMFLOAT4X4 transform = {
+	DirectX::XMFLOAT4X4 moveFloor_transform = {
 		1,0,0,0,
 		0,1,0,0,
 		0,0,1,0,

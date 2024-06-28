@@ -43,13 +43,6 @@ private:
 		const DirectX::XMFLOAT4X4& projection
 	);
 
-	////エネミー配置処理
-	//void PlaceEnemies(
-	//	ID3D11DeviceContext* dc,
-	//	const DirectX::XMFLOAT4X4& view,
-	//	const DirectX::XMFLOAT4X4& projection
-	//);
-
 	//ワールド座標からスクリーン座標への変換を行う関数
 	DirectX::XMFLOAT2 WorldToScreen(const DirectX::XMFLOAT3& worldPos, const Viewport& viewport, const DirectX::FXMMATRIX projection, const DirectX::FXMMATRIX& view, const DirectX::FXMMATRIX world)
 	{
@@ -73,7 +66,6 @@ private:
 		screenPos.y = DirectX::XMVectorGetY(screenPosVec);
 		return screenPos;
 	};
-
 
 	//スクリーン座標からワールド座標への変換させる関数
 	DirectX::XMFLOAT3 ScreenToWorld(float x,float y,float z,const Viewport& viewport,const DirectX::FXMMATRIX projectile,const DirectX::FXMMATRIX view,const DirectX::FXMMATRIX world)
@@ -99,9 +91,6 @@ private:
 		return worldPos;
 	};
 
-
-	
-
 private:
 	Stage* stage = nullptr;
 
@@ -111,8 +100,9 @@ private:
 
 	CameraController* cameraController = nullptr;
 
-	
 	int clickCount = 0;
 	int textureWidth; // テクスチャの幅
 	int gaugeWidth;   // 現在のゲージの幅
+
+
 };

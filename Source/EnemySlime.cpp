@@ -127,7 +127,7 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
 				//敵を吹き飛ばすベクトルを算出
 				DirectX::XMFLOAT3 vec = {};
 				vec.x = outPosition.x - nodePosition.x;
-				vec.z - outPosition.z - nodePosition.z;
+				vec.z = outPosition.z - nodePosition.z;
 				float length = sqrtf(vec.x * vec.x + vec.z * vec.z);
 				vec.x /= length;
 				vec.z /= length;

@@ -122,7 +122,7 @@ protected:
 	void OnDead() override;
 
 	//ƒ_ƒ[ƒW‚ğó‚¯‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
-	void OnDamaged() override;
+	//void OnDamaged() override;
 };
 
  

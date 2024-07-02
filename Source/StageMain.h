@@ -14,9 +14,26 @@ public:
 	void Update(float elapedTime) override;
 	//描画処理
     void Render(ID3D11DeviceContext* dc, Shader* shader) override;
+
+	
 	//レイキャスト
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit) override;
+	
+	//ステージの回転更新処理
+	void UpdateStageRotate(float elapsedTime);
+	
 
 private:
 	Model* model = nullptr;
+	float rotateSpeed = 0.1f;   //回転速度(度/秒)
+	float totalRotation = 0.0f;
+	bool isRotating = false;
+	DirectX::XMFLOAT3 rotation = { 0,0,0 };
+
+	DirectX::XMFLOAT4X4 stage_transform = {
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		0,0,0,1
+	};
 };

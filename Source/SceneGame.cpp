@@ -125,6 +125,8 @@ void SceneGame::Update(float elapsedTime)
 
 	//エネミー更新処理
 	EnemyManager::Instance().Update(elapsedTime);
+
+	
 }
 
 // 描画処理
@@ -206,8 +208,12 @@ void SceneGame::Render()
 	{
 		//プレイヤーデバッグ描画
 		player->DrawDebugGuI();
+		
 	}
+
+	
 }
+
 
 //エネミーHPゲージ描画
 void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection)

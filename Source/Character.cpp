@@ -217,8 +217,6 @@ void Character::UpdateVerticalMove(float elapsedTime)
 			position.y += my;
 			isGround = false;
 		}
-	
-	
 	}
 	//上昇中
 	else if (my> 0.0f)
@@ -227,15 +225,8 @@ void Character::UpdateVerticalMove(float elapsedTime)
 		isGround = false;
 	}
 
-
-
 	//地面の向きに沿うようにXZ軸回転
 	{
-		//Y軸が法線ベクトル方向に向くオイラー格回転を算出する
-		/*angle.x = atan2f(normal.z, normal.y);
-		angle.z = -atan2f(normal.x, normal.y);*/
-		
-
 		float Euler_angleX =  atan2f(normal.z, normal.y);
 		float Euler_angleZ = -atan2f(normal.x, normal.y);
 
@@ -245,6 +236,13 @@ void Character::UpdateVerticalMove(float elapsedTime)
 
 	}
 
+	{
+		//坂の方向に移動する速度を計算
+		float slopeSpeed = slopeRate * elapsedTime * maxSlopeSpeed;
+		//坂の方向に移動
+		position.x += slopeSpeed * normal.x;
+		position.z += slopeSpeed * normal.z;
+	}
 	
 }
 
@@ -268,9 +266,6 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 			// 速度の方向を計算
 			float directionX = velocity.x / length;
 			float directionZ = velocity.z / length;
-
-			// 速度の長さに減衰率を適用して新しい長さを計算
-			//float newLength = length - friiction;
 
 			// 新しい速度を計算
 			velocity.x -= directionX * friiction;
@@ -298,7 +293,7 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 			{
 				velocity.y -= length * slopeRate * elapsedFrame;
 			}
-
+			
 			//空中にいる時は加速力を減らす
 			if (!IsGround() )acceleration *= (1.0f - airControl);//加速力を減らす
 
@@ -317,6 +312,8 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 			}
 		}
 	}
+
+
 
 	// 移動ベクトルをリセット
 	moveVecX = 0.0f;
@@ -363,6 +360,8 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 				DirectX::XMFLOAT3 R;
 				DirectX::XMStoreFloat3(&R, rVec);
 
+				
+
 				HitResult hitwall;
 				//hit.positionを開始位置として、Rを終点位置としてレイキャストをする
 				if (!StageManager::Instance().RayCast(hit.position,R,hitwall))
@@ -379,6 +378,7 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 					position.z = hitwall.position.z;
 					
 				}
+				
 		}
 		else
 		{
@@ -387,4 +387,5 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 			position.z += mz;
 		}
 	}
+	
 }

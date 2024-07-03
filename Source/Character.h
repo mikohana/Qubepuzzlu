@@ -139,5 +139,7 @@ protected:
 
 	float sllopeAngle = 0.0f;
 
+	float maxSlopeSpeed = 5.0f;
+
 	DirectX::XMFLOAT3 velocity = { 0,0,0 };
 };

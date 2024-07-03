@@ -53,26 +53,22 @@ StageMain::StageMain()
 		GamePad& gamepad = Input::Instance().GetGamePad();
 		
 		if (gamepad.GetButton() & GamePad::KEY_W) // ã‰ñ“]
-		{
-			isRotating = true;
+		{	
 			rotation.x -= rotateSpeed * elapsedTime;
 		}
 		//A
 		if (gamepad.GetButton() & GamePad::KEY_A) // ¶‰ñ“]
 		{
-			isRotating = true;
 			rotation.z -= rotateSpeed * elapsedTime;
 		}
 		//S
 		if (gamepad.GetButton() & GamePad::KEY_S) // ‰º‰ñ“]
-		{
-			isRotating = true;
+		{	
 			rotation.x += rotateSpeed * elapsedTime;
 		}
 		//D
 		if (gamepad.GetButton() & GamePad::KEY_D) // ‰E‰ñ“]
 		{
-			isRotating = true;
 			rotation.z += rotateSpeed * elapsedTime;
 		}
 	}

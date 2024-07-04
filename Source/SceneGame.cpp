@@ -43,8 +43,14 @@ void SceneGame::Initialize()
 	//プレイヤー初期化
 	player = new Player();
 
+	//スカイボックスの読み込み
+	skybox = new SkyBox("Data/SkyBox/Sky.png");
+
 	//ゲージスプライト初期化
 	gauge = new Sprite();
+
+	//カメラコントローラー初期化
+	cameraController = new CameraController();
 
 	////エネミー初期化
 	EnemyManager& enemyManager = EnemyManager::Instance();
@@ -71,8 +77,7 @@ void SceneGame::Initialize()
 		1000.0f
 	);
 
-	//カメラコントローラー初期化
-	cameraController = new CameraController();
+	
 }
 
 // 終了化
@@ -201,7 +206,9 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
+		skybox->Render(dc, rc);
 		RenderEnemyGauge(dc, rc.view, rc.projection);
+		
 	}
 
 	// 2DデバッグGUI描画

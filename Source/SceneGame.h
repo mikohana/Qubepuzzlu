@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Graphics/Sprite.h"
 #include "CameraController.h"
+#include "Graphics/SkyBox.h"
 //ビューポートの範囲の構造体
 struct  Viewport
 {
@@ -93,6 +94,8 @@ private:
 	};
 
 private:
+	SkyBox* skybox = nullptr;
+
 	Stage* stage = nullptr;
 
 	Player* player = nullptr;

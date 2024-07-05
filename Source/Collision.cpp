@@ -367,29 +367,25 @@ bool Collision::InstarsecCubeVsCube(const DirectX::XMFLOAT3& cubeA_Position, flo
         max1.z >= min2.z && min1.z <= max2.z) {
         // 重なっている場合、押し出し処理を行う
 
-        // 押し出しベクトルの計算
-        float overlapX = min(max1.x, max2.x) - max(min1.x, min2.x);
-        float overlapY = min(max1.y, max2.y) - max(min1.y, min2.y);
-        float overlapZ = min(max1.z, max2.z) - max(min1.z, min2.z);
-        
-    
+        float vx = min2.x - min1.x;
 
-        // X方向の押し出し
-        if (std::fabsf(overlapX) < std::fabsf(overlapY) && std::fabsf(overlapX) < std::fabsf(overlapZ)) {
-            float moveX = overlapX / 2.0f;
-            outCubePosition.x = moveX;
-        }
-        // Y方向の押し出し
-        else if (std::fabsf(overlapY) < std::fabsf(overlapX) && std::fabsf(overlapY) < std::fabsf(overlapZ)) {
-            float moveY = overlapY / 2.0f;
-            outCubePosition.y = moveY;
-        }
-        // Z方向の押し出し
-        else {
-            float moveZ = overlapZ / 2.0f;
-            outCubePosition.z = moveZ;
-        }
+        //Z同士を引く
+        float vz = min2.z - min1.z;
 
+        //XZの長さを計算する
+        float distXZ = sqrtf(vx * vx + vz * vz);
+
+
+
+
+        //AがBを押し出す
+        vx /= distXZ;
+        vz /= distXZ;
+
+
+        outCubePosition.x = vx * (widthA) * 1.15f + min1.x;
+        outCubePosition.y = min2.y;
+        outCubePosition.z = vz * (widthA) * 1.15f + min1.z;
         
 
         return true;  // 重なっていた

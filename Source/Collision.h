@@ -61,6 +61,18 @@ public:
         result.normal.z = 0.0f;
         return true;
    }*/
+
+   //四角形と四角形の交差判定
+   static bool InstarsecCubeVsCube(
+       const DirectX::XMFLOAT3& cubeA_Position,
+       float widthA,
+       float heightA,
+       const DirectX::XMFLOAT3& cubeB_Position,
+       float widthB,
+       float heightB,
+       DirectX::XMFLOAT3& outCubePosition
+   );
+   
 };
 
   

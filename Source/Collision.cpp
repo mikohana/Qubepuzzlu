@@ -1,4 +1,5 @@
 #include "Collision.h"
+#include <cmath> 
 
 //bool Collision::IntrresectVsSphere(const DirectX::XMFLOAT3& postionA, float radiusA, const DirectX::XMFLOAT3& postionB ,float radiusB, DirectX::XMFLOAT3& outPostionB)
 //{
@@ -328,6 +329,73 @@ bool Collision::IntersecRayVsModel(
         }
     }
     return hit;
+}
+
+bool Collision::InstarsecCubeVsCube(const DirectX::XMFLOAT3& cubeA_Position, float widthA, float heightA, const DirectX::XMFLOAT3& cubeB_Position, float widthB, float heightB, DirectX::XMFLOAT3& outCubePosition)
+{
+    // 立方体の各面の最小座標と最大座標を計算
+    DirectX::XMFLOAT3 min1 = {
+        
+        cubeA_Position.x,
+        cubeA_Position.y,
+        cubeA_Position.z
+    };
+    DirectX::XMFLOAT3 max1 = {
+        
+        cubeA_Position.x + widthA,
+        cubeA_Position.y + heightA,
+        cubeA_Position.z + widthA
+
+    };
+
+    DirectX::XMFLOAT3 min2 = {
+       
+         cubeB_Position.x,
+         cubeB_Position.y,
+         cubeB_Position.z
+    };
+    DirectX::XMFLOAT3 max2 = {
+       
+        cubeB_Position.x + widthB,
+        cubeB_Position.y + heightB,
+        cubeB_Position.z + widthB
+    };
+
+    // 立方体同士が重なっているかどうかを判定
+    if (max1.x >= min2.x && min1.x <= max2.x &&
+        max1.y >= min2.y && min1.y <= max2.y &&
+        max1.z >= min2.z && min1.z <= max2.z) {
+        // 重なっている場合、押し出し処理を行う
+
+        // 押し出しベクトルの計算
+        float overlapX = min(max1.x, max2.x) - max(min1.x, min2.x);
+        float overlapY = min(max1.y, max2.y) - max(min1.y, min2.y);
+        float overlapZ = min(max1.z, max2.z) - max(min1.z, min2.z);
+        
+    
+
+        // X方向の押し出し
+        if (std::fabsf(overlapX) < std::fabsf(overlapY) && std::fabsf(overlapX) < std::fabsf(overlapZ)) {
+            float moveX = overlapX / 2.0f;
+            outCubePosition.x = moveX;
+        }
+        // Y方向の押し出し
+        else if (std::fabsf(overlapY) < std::fabsf(overlapX) && std::fabsf(overlapY) < std::fabsf(overlapZ)) {
+            float moveY = overlapY / 2.0f;
+            outCubePosition.y = moveY;
+        }
+        // Z方向の押し出し
+        else {
+            float moveZ = overlapZ / 2.0f;
+            outCubePosition.z = moveZ;
+        }
+
+        
+
+        return true;  // 重なっていた
+    }
+
+    return false;  // 重なっていない
 }
 
 

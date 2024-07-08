@@ -394,7 +394,66 @@ bool Collision::InstarsecCubeVsCube(const DirectX::XMFLOAT3& cubeA_Position, flo
     return false;  // 重なっていない
 }
 
+bool Collision::InstarsecCubeVsCubeWithSlope(const DirectX::XMFLOAT3& cubeA_Position, float widthA, float heightA,
+    const DirectX::XMFLOAT3& cubeB_Position, float widthB, float heightB,
+    const DirectX::XMFLOAT3& blockNormal, DirectX::XMFLOAT3& outCubePosition,
+    DirectX::XMFLOAT4 colorA, DirectX::XMFLOAT4 colorB)
+{
+    DirectX::XMFLOAT3 vec = blockNormal;
+    if (vec.x < 0)
+    {
+        vec.x *= -1.0f;
+    }
+    if (vec.y < 0)
+    {
+        vec.y *= -1.0f;
+    }
+    if (vec.z < 0)
+    {
+        vec.z *= -1.0f;
+    }
 
+    // 立方体の各面の最小座標と最大座標を計算
+    DirectX::XMFLOAT3 min1 = {
+        cubeA_Position.x,
+        cubeA_Position.y,
+        cubeA_Position.z
+    };
+    DirectX::XMFLOAT3 max1;
+    /*cubeA_Position.x + widthA,
+    cubeA_Position.y + heightA,
+    cubeA_Position.z + widthA*/
+    DirectX::XMStoreFloat3(&max1, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&cubeA_Position), DirectX::XMVectorScale(DirectX::XMLoadFloat3(&vec), widthA)));
+
+
+    DirectX::XMFLOAT3 min2 = {
+        cubeB_Position.x,
+        cubeB_Position.y,
+        cubeB_Position.z
+    };
+    DirectX::XMFLOAT3 max2;
+    /*cubeB_Position.x + widthB,
+    cubeB_Position.y + heightB,
+    cubeB_Position.z + widthB*/
+    DirectX::XMStoreFloat3(&max2, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&cubeB_Position), DirectX::XMVectorScale(DirectX::XMLoadFloat3(&vec), widthB)));
+
+    // 立方体同士が重なっているかどうかを判定
+    if (max1.x >= min2.x && min1.x <= max2.x &&
+        max1.y >= min2.y && min1.y <= max2.y &&
+        max1.z >= min2.z && min1.z <= max2.z) {
+
+
+
+        // 押し出し処理
+        outCubePosition.x = min1.x + (widthA * 1.15f); // 1.15倍して押し出す
+        outCubePosition.y = min1.y + (widthA * 1.15f);
+        outCubePosition.z = min1.z + (widthA * 1.15f); // 1.15倍して押し出す
+
+        return true; // 重なっていた
+    }
+
+    return false; // 重なっていない
+}
 
 
 ////レイとモデルの交差判定

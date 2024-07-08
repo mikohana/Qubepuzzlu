@@ -72,6 +72,11 @@ public:
        float heightB,
        DirectX::XMFLOAT3& outCubePosition
    );
+
+   static bool InstarsecCubeVsCubeWithSlope(const DirectX::XMFLOAT3& cubeA_Position, float widthA, float heightA,
+       const DirectX::XMFLOAT3& cubeB_Position, float widthB, float heightB,
+       const DirectX::XMFLOAT3& blockNormal, DirectX::XMFLOAT3& outCubePosition,
+       DirectX::XMFLOAT4 colorA, DirectX::XMFLOAT4 colorB);
    
 };
 

@@ -59,36 +59,6 @@ void EnemyManager::DrawDebugPrimitive()
 	debugRender->DrawSphere(position, radius, DirectX::XMFLOAT4{ 0,0,0,1 });
 }
 
-//球と球
-//void EnemyManager::CollisionEnemyVsEnemies()
-//{
-//	EnemyManager& enemyManager = EnemyManager::Instance();
-//
-//	int enemyCount = enemyManager.GetEnemyCount();
-//	for (int i = 0; i < enemyCount; i++)
-//	{
-//		Enemy* enemy1 = GetEnemy(i);
-//
-//		for (int j = i + 1; j < enemyCount; j++)
-//		{
-//			Enemy* enemy2 = GetEnemy(j);
-//
-//			DirectX::XMFLOAT3 outPosition;
-//
-//			// 衝突検出
-//			if (Collision::IntrresectVsSphere(
-//				enemy1->GetPosition(), enemy1->GetRadius(),
-//				enemy2->GetPosition(), enemy2->GetRadius(),
-//				outPosition
-//			))
-//			{
-//				//押し出し後の位置
-//				enemy2->SetPosition(outPosition);
-//			}
-//		}
-//	}
-//}
-
 void EnemyManager::Remove(Enemy* enemy)
 {
 	//破棄リストに追加
@@ -108,17 +78,6 @@ void EnemyManager::CollisionEnemyVsEnemies()
 			Enemy* enemyB = enemies.at(j);
 
 			DirectX::XMFLOAT3 outPosition;
-			/*if (Collision::IntersecCylinderVsCylinder(
-				enemyA->GetPosition(),
-				enemyA->GetRadius(),
-				enemyA->GetHeight(),
-				enemyB->GetPosition(),
-				enemyB->GetRadius(),
-				enemyB->GetHeight(),
-				outPosition))
-			{
-				enemyB->SetPosition(outPosition);
-			}*/
 			if (Collision::InstarsecCubeVsCube(
 				enemyA->GetPosition(), 1.0f, enemyA->GetHeight(), enemyB->GetPosition(), 1.0f, enemyB->GetHeight(), outPosition
 			))

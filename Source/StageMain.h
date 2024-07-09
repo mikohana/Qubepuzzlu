@@ -27,6 +27,7 @@ private:
 	Model* model = nullptr;
 	float rotateSpeed = 0.3f;   //‰ñ“]‘¬“x(“x/•b)
 	float totalRotation = 0.0f;
+	DirectX::XMFLOAT3 scale = { 1,1,1 };
 	bool isRotating = false;
 	DirectX::XMFLOAT3 rotation = { 0,0,0 };
 

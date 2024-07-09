@@ -48,7 +48,7 @@ private:
 	DirectX::XMFLOAT3 eye;
 	DirectX::XMFLOAT3 focus;
 
-	DirectX::XMFLOAT3 up;
+	DirectX::XMFLOAT3 up ;
 	DirectX::XMFLOAT3 front;
 	DirectX::XMFLOAT3 right;
 

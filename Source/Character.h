@@ -107,7 +107,7 @@ protected:
 
 	float jumpSpeed = 20.0f;
 
-	float gravity = -1.0f;
+	float gravity = -100.0f;
 
 	float moveSpeed = 5.0f;
 
@@ -139,7 +139,7 @@ protected:
 
 	float sllopeAngle = 0.0f;
 
-	float maxSlopeSpeed = 5.0f;
+	float maxSlopeSpeed = 25.0f;
 
 	DirectX::XMFLOAT3 velocity = { 0,0,0 };
 };

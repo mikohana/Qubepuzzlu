@@ -7,7 +7,9 @@
 StageMain::StageMain()
 {
 	//ステージモデルを読み込み
-	model = new Model("Data/Model/ExampleStage/ExampleStage.mdl");
+	model = new Model("Data/Model/ExampleStage/stage1.mdl");
+	scale = {0.02f,0.02f,0.02f};
+	
 }
 	StageMain::~StageMain()
 	{
@@ -23,7 +25,12 @@ StageMain::StageMain()
 
 		DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
 
-		DirectX::XMStoreFloat4x4(&stage_transform, R);
+		//スケーリング行列を作成
+		DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
+		//回転とスケールを掛け合わす
+		DirectX::XMMATRIX M = R * S;
+
+		DirectX::XMStoreFloat4x4(&stage_transform,M);
 		//ステージ行列の更新処理
 		model->UpdateTransform(stage_transform);
 	}

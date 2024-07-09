@@ -104,6 +104,13 @@ void SceneGame::Finalize()
 		player = nullptr;
 	}
 
+	//スカイボックス終了化
+	if (skybox != nullptr)
+	{
+		delete skybox;
+		skybox = nullptr;
+	}
+
 	//エネミー終了化
 	EnemyManager::Instance().Clear();
 

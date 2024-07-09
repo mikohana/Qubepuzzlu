@@ -78,8 +78,8 @@ void EnemyManager::CollisionEnemyVsEnemies()
 			Enemy* enemyB = enemies.at(j);
 
 			DirectX::XMFLOAT3 outPosition;
-			if (Collision::InstarsecCubeVsCube(
-				enemyA->GetPosition(), 1.0f, enemyA->GetHeight(), enemyB->GetPosition(), 1.0f, enemyB->GetHeight(), outPosition
+			if (Collision::IntersecCylinderVsCylinder(
+				enemyA->GetPosition(), enemyA->GetRadius(), enemyA->GetHeight(), enemyB->GetPosition(), enemyB->GetRadius(), enemyB->GetHeight(), outPosition
 			))
 			{
 				enemyB->SetPosition(outPosition);

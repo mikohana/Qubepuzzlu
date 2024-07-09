@@ -32,6 +32,8 @@ public:
 	//レイキャスト
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 
+	Stage* GetStage(int index) { return stages.at(index); }
+
 private:
 	std::vector<Stage*>stages;
 };

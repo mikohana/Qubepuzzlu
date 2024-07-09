@@ -57,7 +57,7 @@ void Player::Update(float elapedTime)
 	//}
 
 	////移動入力処理
-	//InputMove(elapedTime);
+	InputMove(elapedTime);
 	//
 	////ジャンプ入力処理
 	//InputJump();
@@ -170,7 +170,7 @@ bool Player::InputMove(float elapsedTime)
 	//進行ベクトル取得
 	DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
-	Move(moveVec.x, moveVec.z, moveSpeed);
+	MoveVec(moveVec.x, moveVec.z, moveSpeed);
 
 	//旋回処理
 	Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);

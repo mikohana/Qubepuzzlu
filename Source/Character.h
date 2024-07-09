@@ -67,7 +67,10 @@ protected:
 
 	//移動処理
 	// void Move(float elapsedTime, float vx, float vz, float speed);
-	void Move(float vx, float vz, float speed);
+	void MoveVec(float vx, float vz, float speed);
+
+	//傾斜率で移動したベクトルを保持する関数
+	//void SlopeMove(float vx, float vy, float vz, float slopSpeed);
 
 	//旋回処理
 	void Turn(float elaspedTime, float vx, float vz, float speed);
@@ -101,13 +104,13 @@ protected:
 		0,0,1,0,
 		0,0,0,1
 	};
-	float radius = 0.5f;
+	float radius = 1.0f;
 
 	float turnSpeed = DirectX::XMConvertToRadians(720);
 
 	float jumpSpeed = 20.0f;
 
-	float gravity = -100.0f;
+	float gravity = -50.0f;
 
 	float moveSpeed = 5.0f;
 
@@ -133,13 +136,16 @@ protected:
 
 	float airControl = 0.3f;
 
-	float stepOffset = 1.0f;
+	float stepOffset = 1.f;
 
 	float slopeRate = 1.0f;
 
 	float sllopeAngle = 0.0f;
 
-	float maxSlopeSpeed = 25.0f;
+	float maxSlopeSpeed = 10.0f;
+
+	//進行ベクトルを計算
+
 
 	DirectX::XMFLOAT3 velocity = { 0,0,0 };
 };

@@ -75,17 +75,8 @@ void Character::UpdateInvincTimer(float elapsedTime)
 	}
 }
 
-//void Character::Move(float elapsedTime, float vx, float vz, float speed)
-//{
-//	//移動方向ベクトルを設定
-//	moveVecX = vx;
-//	moveVecZ = vz;
-//
-//	//最大速度設定
-//	maxMoveSpeed = speed;
-//}
 
-void Character::Move(float vx, float vz, float speed)
+void Character::MoveVec(float vx, float vz, float speed)
 {
 	//方向ベクトルを設定
 	moveVecX = vx;
@@ -94,7 +85,6 @@ void Character::Move(float vx, float vz, float speed)
 	//最大速度処理
 	maxMoveSpeed = speed;
 }
-
 
 void Character::Turn(float elaspedTime, float vx, float vz, float speed)
 {
@@ -157,6 +147,10 @@ void Character::UPdateVelocity(float elaspedTime)
 
 	//水平移動更新処理
 	UpdateHorizontalMove(elaspedTime);
+
+	//SlopeMove(elaspedTime);
+
+
 }
 
 //垂直速力更新処理
@@ -181,9 +175,9 @@ void Character::UpdateVerticalMove(float elapsedTime)
 	{
 		
 		//レイの開始位置は足元より少し上
-		DirectX::XMFLOAT3 start = { position.x,position.y + stepOffset,position.z };
+		DirectX::XMFLOAT3 start = { position.x,position.y + stepOffset,position.z};
 		//レイの終点位置は移動後の位置
-		DirectX::XMFLOAT3 end = { position.x,position.y + my,position.z };
+		DirectX::XMFLOAT3 end = { position.x ,position.y + my,position.z };
 
 		//レイキャストによる地面判定
 		HitResult hit;
@@ -201,7 +195,6 @@ void Character::UpdateVerticalMove(float elapsedTime)
 			//傾斜率の計算
 			float normallengthXZ = sqrtf(hit.normal.x * hit.normal.x + hit.normal.z * hit.normal.z);
 			slopeRate = 1.0f - (hit.normal.y / (normallengthXZ + hit.normal.y));
-
 
 			//着地したら
 			if (!isGround)
@@ -242,6 +235,8 @@ void Character::UpdateVerticalMove(float elapsedTime)
 		//坂の方向に移動
 		position.x += slopeSpeed * normal.x;
 		position.z += slopeSpeed * normal.z;
+
+		
 	}
 	
 }
@@ -331,10 +326,11 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 		float mx = velocity.x * elapsedTime;
 		float mz = velocity.z * elapsedTime;
 
+
 		// レイの開始位置と終点位置
 		DirectX::XMFLOAT3 start = { position.x, position.y + 1.0f, position.z };
 		DirectX::XMFLOAT3 end = { position.x + mx, position.y + 1.0f, position.z + mz };
-
+		
 		// レイキャストによる壁判定
 		HitResult hit;
 		if (StageManager::Instance().RayCast(start, end, hit))
@@ -352,16 +348,16 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 
 				//補正位置の計算
 				//法線ベクトルと進行方向のドット積を計算して、滑り幅(a)として使用
-				float a = DirectX::XMVectorGetX(Dot);
+				float a = DirectX::XMVectorGetX(Dot) * 0.01f;
 
 
 				// 交点からの滑り先の位置を計算
-				DirectX::XMVECTOR rVec = DirectX::XMVectorAdd(End, DirectX::XMVectorScale(Normal, a * 1.8f));
+				DirectX::XMVECTOR rVec = DirectX::XMVectorAdd(End, DirectX::XMVectorScale(Normal, a));
 				DirectX::XMFLOAT3 R;
 				DirectX::XMStoreFloat3(&R, rVec);
 
 				
-
+#if false
 				HitResult hitwall;
 				//hit.positionを開始位置として、Rを終点位置としてレイキャストをする
 				if (!StageManager::Instance().RayCast(hit.position,R,hitwall))
@@ -378,6 +374,12 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 					position.z = hitwall.position.z;
 					
 				}
+#endif
+
+				//当たって居なかったら
+
+				position.x = R.x;
+				position.z = R.z;
 				
 		}
 		else

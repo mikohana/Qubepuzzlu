@@ -6,6 +6,8 @@
 #include "Camera.h"
 #include "EnemyManager.h"
 #include "EnemySlime.h"
+#include "BoxManager.h"
+#include "Boxes.h"
 #include "EffectManager.h"
 #include "Input/Input.h"
 
@@ -34,11 +36,7 @@ void SceneGame::Initialize()
 	StageMain* stageMain = new StageMain();
 	stageManager.Register(stageMain);
 
-	StageMoveFloor* stageMoveFloor = new StageMoveFloor();
-	stageMoveFloor->SetStartPoint(DirectX::XMFLOAT3(0, 1, 2));
-	stageMoveFloor->SetGoalPoint(DirectX::XMFLOAT3(10, 2, 3));
-	stageMoveFloor->SetTorque(DirectX::XMFLOAT3(0, 1.0f, 0));
-	stageManager.Register(stageMoveFloor);
+	
 
 	//プレイヤー初期化
 	player = new Player();
@@ -62,6 +60,15 @@ void SceneGame::Initialize()
 		enemyManager.Register(slime);
 	}
 
+	//ボックス初期化
+	BoxManager& boxManager = BoxManager::Instance();
+	for (int i = 0; i < 3; ++i)
+	{
+		Boxes* boxes = new Boxes();
+		boxes->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 1,5));
+		boxManager.Register(boxes);
+	}
+	
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
@@ -114,6 +121,9 @@ void SceneGame::Finalize()
 	//エネミー終了化
 	EnemyManager::Instance().Clear();
 
+	//ボックス終了化
+	BoxManager::Instance().Clear();
+	
 	//ステージ終了化
 	StageManager::Instance().Clear();
 	
@@ -134,6 +144,9 @@ void SceneGame::Update(float elapsedTime)
 
 	//プレイヤー更新処理
 	player->Update(elapsedTime);
+
+	//ボックス更新処理
+	BoxManager::Instance().Update(elapsedTime);
 
 	//エネミー更新処理
 	EnemyManager::Instance().Update(elapsedTime);
@@ -174,7 +187,11 @@ void SceneGame::Render()
 		player->Render(dc, shader);
 		//エネミー描画
 		EnemyManager::Instance().Render(dc, shader);
-		shader->End(dc);	
+		//ボックス描画
+		BoxManager::Instance().Render(dc, shader);
+		shader->End(dc);
+		
+			
 	}
 
 	//3Dエフェクト描画
@@ -185,29 +202,14 @@ void SceneGame::Render()
 	// 3Dデバッグ描画
 	{
 		player->DrawDebugPrimitive();
-		
+		//
 		DirectX::XMFLOAT4 color = { 1.0f,  1.0f,  1.0f,  1.0f };
-		
-		//プレイヤーデバッグプリミティブ円柱描画
+		//
+		////プレイヤーデバッグプリミティブ円柱描画
 		graphics.GetDebugRenderer()->DrawCylinder(player->GetPosition(), player->GetRadius(), player->GetHeight(), color);
-		 
-		//エネミーデバックプリミティブ描画
-		int enemyCount = EnemyManager::Instance().GetEnemyCount();
-		for (int i =0;i < enemyCount;++i)
-		{
-			Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
-			DirectX::XMFLOAT3 enemyPosition = enemy->GetPosition();
-			float enemyRadius = enemy->GetRadius();
-			float enemyHeight = enemy->GetHeight();
+	
 
-			//エネミーデバッグプリミティブ円柱描画
-			graphics.GetDebugRenderer()->DrawCylinder(enemyPosition, enemyRadius, enemyHeight, color);
-		}
-
-		// ラインレンダラ描画実行
-		graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);
-
-		// デバッグレンダラ描画実行
+		//// デバッグレンダラ描画実行
 		graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
 	}
 

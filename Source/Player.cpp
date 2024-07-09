@@ -109,10 +109,10 @@ void Player::Update(float elapedTime)
 void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
 	//ƒvƒŒƒCƒ„[•`‰æ
-	shader->Draw(dc, model);
+	/*shader->Draw(dc, model);*/
 	
 	//’eŠÛ•`‰æ
-	projectileManager.Render(dc, shader);
+	/*projectileManager.Render(dc, shader);*/
 }
 
 void Player::DrawDebugGuI()

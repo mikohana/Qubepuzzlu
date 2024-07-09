@@ -41,7 +41,7 @@ void SceneTitle::Update(float elapsedTime)
 	}
 }
 
-//•`‰æˆ—
+//2D•`‰æˆ—
 void SceneTitle::Render()
 {
 	Graphics& graphics = Graphics::Instance();
@@ -68,5 +68,5 @@ void SceneTitle::Render()
 			0,
 			1, 1, 1, 1);
 	}
-}
 	
+}

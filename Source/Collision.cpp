@@ -331,34 +331,35 @@ bool Collision::IntersecRayVsModel(
     return hit;
 }
 
-bool Collision::InstarsecCubeVsCube(const DirectX::XMFLOAT3& cubeA_Position, float widthA, float heightA, const DirectX::XMFLOAT3& cubeB_Position, float widthB, float heightB, DirectX::XMFLOAT3& outCubePosition)
+bool Collision::InstarsecCubeVsCube(const DirectX::XMFLOAT3& cubeA_Position, float widthA, float heightA, const DirectX::XMFLOAT3& cubeB_Position, float widthB, float heightB,
+    DirectX::XMFLOAT3& outCubePosition)
 {
     // 立方体の各面の最小座標と最大座標を計算
     DirectX::XMFLOAT3 min1 = {
-        
-        cubeA_Position.x,
-        cubeA_Position.y,
-        cubeA_Position.z
+
+        cubeA_Position.x - widthA / 2.0f,
+        cubeA_Position.y ,
+        cubeA_Position.z - widthA / 2.0f
     };
     DirectX::XMFLOAT3 max1 = {
-        
-        cubeA_Position.x + widthA,
+
+        cubeA_Position.x + widthA / 2.0f,
         cubeA_Position.y + heightA,
-        cubeA_Position.z + widthA
+        cubeA_Position.z + widthA / 2.0f
 
     };
 
     DirectX::XMFLOAT3 min2 = {
-       
-         cubeB_Position.x,
+
+         cubeB_Position.x - widthB / 2.0f,
          cubeB_Position.y,
-         cubeB_Position.z
+         cubeB_Position.z - widthB / 2.0f
     };
     DirectX::XMFLOAT3 max2 = {
-       
-        cubeB_Position.x + widthB,
+
+        cubeB_Position.x + widthB / 2.0f,
         cubeB_Position.y + heightB,
-        cubeB_Position.z + widthB
+        cubeB_Position.z + widthB / 2.0f
     };
 
     // 立方体同士が重なっているかどうかを判定
@@ -366,6 +367,8 @@ bool Collision::InstarsecCubeVsCube(const DirectX::XMFLOAT3& cubeA_Position, flo
         max1.y >= min2.y && min1.y <= max2.y &&
         max1.z >= min2.z && min1.z <= max2.z) {
         // 重なっている場合、押し出し処理を行う
+
+
 
         float vx = min2.x - min1.x;
 
@@ -386,7 +389,13 @@ bool Collision::InstarsecCubeVsCube(const DirectX::XMFLOAT3& cubeA_Position, flo
         outCubePosition.x = vx * (widthA) * 1.15f + min1.x;
         outCubePosition.y = min2.y;
         outCubePosition.z = vz * (widthA) * 1.15f + min1.z;
-        
+
+        //if (colorA.x == colorB.x&& colorA.y == colorB.y&& colorA.z == colorB.z)
+        //{
+        //	//ブロックを消す
+
+        //}
+
 
         return true;  // 重なっていた
     }
@@ -415,15 +424,17 @@ bool Collision::InstarsecCubeVsCubeWithSlope(const DirectX::XMFLOAT3& cubeA_Posi
 
     // 立方体の各面の最小座標と最大座標を計算
     DirectX::XMFLOAT3 min1 = {
-        cubeA_Position.x,
+        cubeA_Position.x - widthA / 2.0f,
         cubeA_Position.y,
-        cubeA_Position.z
+        cubeA_Position.z - widthA / 2.0f
     };
-    DirectX::XMFLOAT3 max1;
-    /*cubeA_Position.x + widthA,
-    cubeA_Position.y + heightA,
-    cubeA_Position.z + widthA*/
-    DirectX::XMStoreFloat3(&max1, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&cubeA_Position), DirectX::XMVectorScale(DirectX::XMLoadFloat3(&vec), widthA)));
+    DirectX::XMFLOAT3 max1 = {
+        cubeA_Position.x + (vec.x * (widthA / 2.0f)),
+        cubeA_Position.y + (vec.y * heightA),
+        cubeA_Position.z + (vec.z * (widthA / 2.0f))
+    };
+    
+    //DirectX::XMStoreFloat3(&max1, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&cubeA_Position), DirectX::XMVectorScale(DirectX::XMLoadFloat3(&vec), widthA)));
 
 
     DirectX::XMFLOAT3 min2 = {
@@ -431,11 +442,13 @@ bool Collision::InstarsecCubeVsCubeWithSlope(const DirectX::XMFLOAT3& cubeA_Posi
         cubeB_Position.y,
         cubeB_Position.z
     };
-    DirectX::XMFLOAT3 max2;
-    /*cubeB_Position.x + widthB,
-    cubeB_Position.y + heightB,
-    cubeB_Position.z + widthB*/
-    DirectX::XMStoreFloat3(&max2, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&cubeB_Position), DirectX::XMVectorScale(DirectX::XMLoadFloat3(&vec), widthB)));
+    DirectX::XMFLOAT3 max2 = {
+         cubeB_Position.x + (vec.x * (widthB / 2.0f)),
+         cubeB_Position.y + (vec.y * heightB),
+         cubeB_Position.z + (vec.z * (widthB / 2.0f))
+    };
+   
+    //DirectX::XMStoreFloat3(&max2, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&cubeB_Position), DirectX::XMVectorScale(DirectX::XMLoadFloat3(&vec), widthB)));
 
     // 立方体同士が重なっているかどうかを判定
     if (max1.x >= min2.x && min1.x <= max2.x &&

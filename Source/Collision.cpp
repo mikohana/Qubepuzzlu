@@ -332,7 +332,7 @@ bool Collision::IntersecRayVsModel(
 }
 
 bool Collision::InstarsecCubeVsCube(const DirectX::XMFLOAT3& cubeA_Position, float widthA, float heightA, const DirectX::XMFLOAT3& cubeB_Position, float widthB, float heightB,
-    DirectX::XMFLOAT3& outCubePosition)
+    DirectX::XMFLOAT3& outCubePositionA, DirectX::XMFLOAT3& outCubePositionB)
 {
     // 立方体の各面の最小座標と最大座標を計算
     DirectX::XMFLOAT3 min1 = {
@@ -368,104 +368,63 @@ bool Collision::InstarsecCubeVsCube(const DirectX::XMFLOAT3& cubeA_Position, flo
         max1.z >= min2.z && min1.z <= max2.z) {
         // 重なっている場合、押し出し処理を行う
 
+      
 
+        // 衝突している辺の長さを計算
+        float overlapX = min(max1.x, max2.x) - max(min1.x, min2.x);
+        float overlapY = min(max1.y, max2.y) - max(min1.y, min2.y);
+        float overlapZ = min(max1.z, max2.z) - max(min1.z, min2.z);
 
-        float vx = min2.x - min1.x;
+        // 衝突点の法線ベクトルを計算
+        DirectX::XMFLOAT3 collisionNormal = { 0.0f, 0.0f, 0.0f };
 
-        //Z同士を引く
-        float vz = min2.z - min1.z;
+        if (overlapX <= overlapY && overlapX <= overlapZ)
+        {
+            // X方向での衝突
+            if (cubeA_Position.x < cubeB_Position.x)
+                collisionNormal.x = -1.0f;
+            else
+                collisionNormal.x = 1.0f;
+        }
+        else if (overlapY <= overlapX && overlapY <= overlapZ)
+        {
+            // Y方向での衝突
+            if (cubeA_Position.y < cubeB_Position.y)
+                collisionNormal.y = -1.0f;
+            else
+                collisionNormal.y = 1.0f;
+        }
+        else
+        {
+            // Z方向での衝突
+            if (cubeA_Position.z < cubeB_Position.z)
+                collisionNormal.z = -1.0f;
+            else
+                collisionNormal.z = 1.0f;
+        }
 
-        //XZの長さを計算する
-        float distXZ = sqrtf(vx * vx + vz * vz);
+        // 押し出しベクトルを計算
+        float penetrationDepth = min(min(overlapX, overlapY), overlapZ);
+        DirectX::XMFLOAT3 pushOut = {
+            collisionNormal.x * penetrationDepth,
+            collisionNormal.y * penetrationDepth,
+            collisionNormal.z * penetrationDepth
+        };
 
+        // 立方体Aと立方体Bの位置を更新
+        outCubePositionA.x = cubeA_Position.x + pushOut.x;
+        outCubePositionA.y = cubeA_Position.y;
+        outCubePositionA.z = cubeA_Position.z + pushOut.z;
 
-
-
-        //AがBを押し出す
-        vx /= distXZ;
-        vz /= distXZ;
-
-
-        outCubePosition.x = vx * (widthA) * 1.15f + min1.x;
-        outCubePosition.y = min2.y;
-        outCubePosition.z = vz * (widthA) * 1.15f + min1.z;
-
-        //if (colorA.x == colorB.x&& colorA.y == colorB.y&& colorA.z == colorB.z)
-        //{
-        //	//ブロックを消す
-
-        //}
+        outCubePositionB.x = cubeB_Position.x - pushOut.x;
+        outCubePositionB.y = cubeB_Position.y;
+        outCubePositionB.z = cubeB_Position.z - pushOut.z;
 
 
         return true;  // 重なっていた
     }
 
     return false;  // 重なっていない
-}
-
-bool Collision::InstarsecCubeVsCubeWithSlope(const DirectX::XMFLOAT3& cubeA_Position, float widthA, float heightA,
-    const DirectX::XMFLOAT3& cubeB_Position, float widthB, float heightB,
-    const DirectX::XMFLOAT3& blockNormal, DirectX::XMFLOAT3& outCubePosition,
-    DirectX::XMFLOAT4 colorA, DirectX::XMFLOAT4 colorB)
-{
-    DirectX::XMFLOAT3 vec = blockNormal;
-    if (vec.x < 0)
-    {
-        vec.x *= -1.0f;
-    }
-    if (vec.y < 0)
-    {
-        vec.y *= -1.0f;
-    }
-    if (vec.z < 0)
-    {
-        vec.z *= -1.0f;
-    }
-
-    // 立方体の各面の最小座標と最大座標を計算
-    DirectX::XMFLOAT3 min1 = {
-        cubeA_Position.x - widthA / 2.0f,
-        cubeA_Position.y,
-        cubeA_Position.z - widthA / 2.0f
-    };
-    DirectX::XMFLOAT3 max1 = {
-        cubeA_Position.x + (vec.x * (widthA / 2.0f)),
-        cubeA_Position.y + (vec.y * heightA),
-        cubeA_Position.z + (vec.z * (widthA / 2.0f))
-    };
-    
-    //DirectX::XMStoreFloat3(&max1, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&cubeA_Position), DirectX::XMVectorScale(DirectX::XMLoadFloat3(&vec), widthA)));
-
-
-    DirectX::XMFLOAT3 min2 = {
-        cubeB_Position.x,
-        cubeB_Position.y,
-        cubeB_Position.z
-    };
-    DirectX::XMFLOAT3 max2 = {
-         cubeB_Position.x + (vec.x * (widthB / 2.0f)),
-         cubeB_Position.y + (vec.y * heightB),
-         cubeB_Position.z + (vec.z * (widthB / 2.0f))
-    };
-   
-    //DirectX::XMStoreFloat3(&max2, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&cubeB_Position), DirectX::XMVectorScale(DirectX::XMLoadFloat3(&vec), widthB)));
-
-    // 立方体同士が重なっているかどうかを判定
-    if (max1.x >= min2.x && min1.x <= max2.x &&
-        max1.y >= min2.y && min1.y <= max2.y &&
-        max1.z >= min2.z && min1.z <= max2.z) {
-
-
-
-        // 押し出し処理
-        outCubePosition.x = min1.x + (widthA * 1.15f); // 1.15倍して押し出す
-        outCubePosition.y = min1.y + (widthA * 1.15f);
-        outCubePosition.z = min1.z + (widthA * 1.15f); // 1.15倍して押し出す
-
-        return true; // 重なっていた
-    }
-
-    return false; // 重なっていない
 }
 
 

@@ -107,6 +107,6 @@ private:
 	int clickCount = 0;
 	int textureWidth; // テクスチャの幅
 	int gaugeWidth;   // 現在のゲージの幅
-
+	
 
 };

@@ -3,30 +3,34 @@
 #include "Graphics/Model.h"
 #include "Box.h"
 
+enum  class BoxColor
+{
+	RED,
+	GREEN,
+	BLUE,
+	PLAYER
+};
+
 //ボックス
 class  Boxes : public Box
 {
 public:
-	Boxes();
+	Boxes(BoxColor color);
 	~Boxes() override;
 
 	void Update(float elapsedTime) override;
 
 	void Render(ID3D11DeviceContext* dc, Shader* shader)override;
 
-	DirectX::XMFLOAT3 GetMoveVec() const;
-
-	bool InputMove(float elapsedTime);
+	BoxColor GetColor() const { return color; }
 
 	//デバッグプリミティブ
 	void DrawDebugPrimitive() override;
 
-	DirectX::XMFLOAT3 UpdateSlopeMoveUpdate(float slopeRate, float elapsedTime);
-
-
 private:
-	Model* model = nullptr;
-	//std::vector<Model*> models[3];
+	//Model* model = nullptr;
+	std::vector<Model*> models[3];
+	BoxColor color;
 
 private:
 	float territoryRange = 10.0f;

@@ -7,6 +7,7 @@
 #include "Collision.h"
 #include "ProjectileStraight.h"
 #include "PrjectileHoming.h"
+#include "CameraController.h"
 //using namespace ImGui;
 
 //インスタンス変数
@@ -123,7 +124,7 @@ void Player::DrawDebugGuI()
 	if(ImGui::Begin("Player",nullptr,ImGuiWindowFlags_None))
 	{
 		//トランスフォーム
-		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("PlayerTransform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			//位置
 			ImGui::InputFloat3("Postion", &position.x);
@@ -143,15 +144,7 @@ void Player::DrawDebugGuI()
 			ImGui::Text("slopeRate : %f", slopeRate);
 		}
 
-		if (ImGui::CollapsingHeader("MoveMent", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			
-		}
-
-		if (ImGui::CollapsingHeader("Collison", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-
-		}
+		
 	}
 	ImGui::End();
 }
@@ -210,6 +203,7 @@ void Player::DrawDebugPrimitive()
 	
 }
 
+
 //プレイヤーとエネミー衝突判定
 void Player::CollisionPlayerEnemies()
 {
@@ -250,6 +244,7 @@ void Player::CollisionPlayerEnemies()
 		}
 	}
 }
+
 
 
 //弾丸と敵の衝突処理

@@ -1,15 +1,11 @@
 #include "Camera.h"
-
 void Camera::SetLoolAt(const DirectX::XMFLOAT3& eye, const DirectX::XMFLOAT3& focus, const DirectX::XMFLOAT3& up)
 {
-	//カメラの位置の値を設定
-	DirectX::XMFLOAT3 fiedeye = eye;
+
 	
-	fiedeye.y += 10.0f;
-	//fiedeye.z -= 10.0f;
 
 	//視点、注視点、上視点からビュー行列を作成
-	DirectX::XMVECTOR Eye = DirectX::XMLoadFloat3(&fiedeye);    //カメラの位置を表すベクトル
+	DirectX::XMVECTOR Eye = DirectX::XMLoadFloat3(&eye);    //カメラの位置を表すベクトル
 	DirectX::XMVECTOR Focus = DirectX::XMLoadFloat3(&focus);//カメラが注視している点を表すベクトル
 	DirectX::XMVECTOR Up = DirectX::XMLoadFloat3(&up);      //カメラの上向きのベクトル
 	DirectX::XMMATRIX View = DirectX::XMMatrixLookAtLH(Eye, Focus, Up);

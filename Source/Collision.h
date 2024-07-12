@@ -62,7 +62,7 @@ public:
        const DirectX::XMFLOAT3& cubeB_Position,
        float widthB,
        float heightB,
-       DirectX::XMFLOAT3& outCubePosition
+       DirectX::XMFLOAT3& outCubePositionA, DirectX::XMFLOAT3& outCubePositionB
    );
 
    //Î–Êã‚Ì‹éŒ`‚Æ‹éŒ`‚Ì“–‚½‚è”»’è

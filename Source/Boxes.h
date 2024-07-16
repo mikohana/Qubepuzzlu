@@ -5,10 +5,12 @@
 
 enum  class BoxColor
 {
-	RED,
-	GREEN,
 	BLUE,
-	PLAYER
+	GREEN,
+	RED,
+	PLAYER,
+	GOAL,
+	NONE
 };
 
 //ボックス
@@ -29,7 +31,7 @@ public:
 
 private:
 	//Model* model = nullptr;
-	std::vector<Model*> models[3];
+	std::vector<Model*> models[5];
 	BoxColor color;
 
 private:

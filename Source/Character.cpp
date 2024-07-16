@@ -378,7 +378,35 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 		}
 	}
 }
-// カメラの回転に基づいてキャラクターを移動させる
+
+//// カメラの回転に基づいてキャラクターを移動させる 回転地が0の場合
+//void Character::MoveWithCameraRotation(float elapsedTime)
+//{
+//
+//	//カメラの回転角度を取得
+//	CameraController& cameraController = CameraController::Instance();
+//
+//	DirectX::XMFLOAT3 cameraAngle = cameraController.GetAngle();
+//
+//	// カメラの回転に基づいてキャラクターの移動方向を計算
+//	float moveDirectionX = cosf(DirectX::XM_PI / 2.0f - cameraAngle.x); // X軸に回転した場合、キャラクターはX方向に移動
+//	float moveDirectionY = sinf(cameraAngle.y); // Y軸に回転した場合、キャラクターはY方向に移動
+//	float moveDirectionZ = cosf(DirectX::XM_PI / 2.0f - cameraAngle.z); // Z軸に回転した場合、キャラクターはZ方向に移動
+//
+//
+//	// 各軸に対応する移動量を計算
+//	float moveAmountX = moveDirectionX * maxMoveSpeed * elapsedTime;
+//	float moveAmountY = moveDirectionY * maxMoveSpeed * elapsedTime;
+//	float moveAmountZ = moveDirectionZ * maxMoveSpeed * elapsedTime;
+//
+//	// キャラクターの位置を更新
+//	position.x += moveAmountX;
+//	position.y += moveAmountY;
+//	position.z += moveAmountZ;
+//}
+
+
+// カメラの回転に基づいてキャラクターを移動させる 回転地がx90の場合
 void Character::MoveWithCameraRotation(float elapsedTime)
 {
 	//カメラの回転角度を取得
@@ -387,55 +415,25 @@ void Character::MoveWithCameraRotation(float elapsedTime)
 	DirectX::XMFLOAT3 cameraAngle = cameraController.GetAngle();
 
 	// カメラの回転に基づいてキャラクターの移動方向を計算
-	float moveDirectionX = cosf(DirectX::XM_PI / 2.0f - cameraAngle.x); // X軸に回転した場合、キャラクターはX方向に移動
-	float moveDirectionY = sinf(cameraAngle.y); // Y軸に回転した場合、キャラクターはY方向に移動
-	float moveDirectionZ = cosf(DirectX::XM_PI / 2.0f - cameraAngle.z); // Z軸に回転した場合、キャラクターはZ方向に移動
-
+	float moveDirectionX = sinf(cameraAngle.x); // X軸に回転した場合、キャラクターはX方向に移動
+	float moveDirectionZ = sinf(cameraAngle.z); // Z軸に回転した場合、キャラクターはZ方向に移動
 
 	// 各軸に対応する移動量を計算
 	float moveAmountX = moveDirectionX * maxMoveSpeed * elapsedTime;
-	float moveAmountY = moveDirectionY * maxMoveSpeed * elapsedTime;
 	float moveAmountZ = moveDirectionZ * maxMoveSpeed * elapsedTime;
 
 	// キャラクターの位置を更新
-	position.x += moveAmountX;
-	position.y += moveAmountY;
-	position.z += moveAmountZ;
-
+	if (cameraAngle.x > DirectX::XM_PI / 2.0f && cameraAngle.x <= DirectX::XM_PI) {
+		position.x -= moveAmountX; // z方向に移動
+	}
+	else if (cameraAngle.x < DirectX::XM_PI / 2.0f && cameraAngle.x >= 0) {
+		position.x += moveAmountX; // -z方向に移動
+	}
+	// キャラクターの位置を更新
+	if (cameraAngle.z > DirectX::XM_PI / 2.0f && cameraAngle.z <= DirectX::XM_PI) {
+		position.z += moveAmountZ; // x方向に移動
+	}
+	else if (cameraAngle.z < DirectX::XM_PI / 2.0f && cameraAngle.z >= 0) {
+		position.z -= moveAmountZ; // -x方向に移動
+	}
 }
-
-
-//
-//
-//void Character::UpdatePositionWithCameraRotation(float elapsedTime)
-//{
-//	//インスタンス変数
-//	CameraController& cameracontroller = CameraController::Instance();
-//
-//	//カメラコントローラーの回転角度取得
-//	DirectX::XMFLOAT3 cameraRotation = cameracontroller.GetAngle();
-//
-//	//カメラの回転角度に基づいて移動ベクトルを計算
-//	DirectX::XMFLOAT3 moveDirection = { velocity.x, 0.0f, velocity.z };
-//	DirectX::XMVECTOR moveDirectionVec = DirectX::XMLoadFloat3(&moveDirection);
-//
-//	//カメラのy軸周りの回転を表す行列を作成
-//	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationY(cameraRotation.y);
-//
-//	//移動方向を回転させる
-//	DirectX::XMVECTOR rotatedMoveDirectionVec = DirectX::XMVector3Transform(moveDirectionVec, rotationMatrix);
-//
-//	//結果をXMFLOAT3に戻す
-//	DirectX::XMFLOAT3 rotatedMoveDirection;
-//	DirectX::XMStoreFloat3(&rotatedMoveDirection, rotatedMoveDirectionVec);
-//
-//	//水平移動値
-//	float mx = rotatedMoveDirection.x * elapsedTime;
-//	float mz = rotatedMoveDirection.z * elapsedTime;
-//
-//	//壁に当たっていない場合、通常の移動
-//	position.x += mx;
-//	position.z += mz;
-//}
-//
-//

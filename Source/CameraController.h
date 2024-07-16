@@ -28,12 +28,22 @@ public:
 
 	//注視点取得
 	const DirectX::XMFLOAT3& GetEye() const { return eye; }
+
+
+	//クオータニオン設定
+	void SetQuaternion(const DirectX::XMVECTOR& quaternion);
+
+
+
 private:
 	DirectX::XMFLOAT3 target = { 0,0,0 };
 	DirectX::XMFLOAT3 angle =  { 0,0,0 };
 	DirectX::XMFLOAT3 eye = { 0,0,0 };
+
+	//DirectX::XMFLOAT4 quaternion;
+	DirectX::XMVECTOR quaternion; 
 	float             rollSpeed = DirectX::XMConvertToRadians(90);
-	float             range = 15.0f;
+	float             range = 20.0f;
 
 	float rotateSpeed = 1.0f;
 

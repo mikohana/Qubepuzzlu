@@ -134,7 +134,7 @@ protected:
 
 	float acceleration = 1.0f;
 
-	float maxMoveSpeed = 5.0f;
+	float maxMoveSpeed = 1.5f;
 
 	float moveVecX = 0.0f;
 

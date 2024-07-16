@@ -36,6 +36,9 @@ Goal::Goal()
 
 	//モデルが大きいのでスケーリング
 	scale.x = scale.y = scale.z = 0.01f;
+	position = DirectX::XMFLOAT3(5.0f, 0.0f, -3.0f);
+	height = 1.0f;
+	radius = 0.5f;
 
 }
 Goal::~Goal()
@@ -48,9 +51,9 @@ Goal::~Goal()
 
 void Goal::Update(float elapedTime)
 {
-	
-	//プレイヤーとエネミーの衝突判定
-	void CollisionPlayerVsGoal();
+
+	//ボックスとゴールの判定
+	//CollisionBoxesVsGoal();
 
 	UpdateTransform();
 
@@ -68,24 +71,32 @@ void Goal::Render(ID3D11DeviceContext* dc, Shader* shader)
 	//ゴール描画
 	shader->Draw(dc, model);
 }
-
-
-//プレイヤーとゴールの当たり判定
-void Goal::CollisionPlayerVsGoal()
-{
-	// プレイヤーのインスタンスを取得
-	Player& player = Player::Instance();
-
-	// プレイヤーとゴールの衝突判定
-	DirectX::XMFLOAT3 outPosition;
-	if (Collision::IntersecCylinderVsCylinder(
-		player.GetPosition(), 2.0f, player.GetHeight(),
-		this->GetPosition(), 2.0f, this->GetHeight(),
-		outPosition
-	))
-	{
-		// 当たったら
-		//ゴールの位置を更新する
-		this->SetPosition(outPosition);
-	}
-}
+//
+////すべてのブロックとゴールの当たり判定
+//void Goal::CollisionBoxesVsGoal()
+//{
+//	// BoxManagerからすべてのボックスを取得
+//	BoxManager& boxManager = BoxManager::Instance();
+//
+//	std::vector<Boxes*> allBoxes = boxManager.GetAllBoxes();
+//
+//	// すべてのボックスとゴールの衝突判定
+//	for (Boxes* box : allBoxes)
+//	{
+//		// ボックスがPlayerであるか確認
+//		if (box->GetColor() == BoxColor::PLAYER)
+//		{
+//			DirectX::XMFLOAT3 outPosition;
+//			if (Collision::IntersecCylinderVsCylinder(
+//				box->GetPosition(), 2.0f, box->GetHeight(),
+//				this->GetPosition(), 2.0f, this->GetHeight(),
+//				outPosition
+//			))
+//			{
+//				// Playerのボックスとゴールが衝突したらタイトルシーンに切り替え
+//				SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+//				break;  // 衝突が確認できたらループを抜ける
+//			}
+//		}
+//	}
+//}

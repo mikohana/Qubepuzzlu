@@ -45,23 +45,8 @@ Player::~Player()
 
 void Player::Update(float elapedTime)
 {
-	////Bボタンでワンショットアニメーション再生
-	//GamePad& gamePad = Input::Instance().GetGamePad();
-	//if (gamePad.GetButtonDown() & GamePad::BTN_B)
-	//{
-	//	model->PlayAnimation(Anim_Running, true);
-	//}
-	////ワンショットアニメーション再生が終わったらループアニメーションを再生
-	//if (!model->IsPlayAnimation())
-	//{
-	//	model->PlayAnimation(Anim_Running, true);
-	//}
-
 	////移動入力処理
-	InputMove(elapedTime);
-	//
-	////ジャンプ入力処理
-	//InputJump();
+	InputMove(elapedTime);	
 
 	//プレイヤーとエネミーの衝突判定
 	CollisionPlayerEnemies();
@@ -203,7 +188,6 @@ void Player::DrawDebugPrimitive()
 	
 }
 
-
 //プレイヤーとエネミー衝突判定
 void Player::CollisionPlayerEnemies()
 {
@@ -244,8 +228,6 @@ void Player::CollisionPlayerEnemies()
 		}
 	}
 }
-
-
 
 //弾丸と敵の衝突処理
 void Player::CollisionProjectileVsEnemies()

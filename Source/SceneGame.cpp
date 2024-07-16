@@ -68,20 +68,25 @@ void SceneGame::Initialize()
 	//ボックス初期化
 	BoxManager& boxManager = BoxManager::Instance();
 
-	// 6つのボックスの初期位置を設定する配列
-	DirectX::XMFLOAT3 initialPositions[7] = {
-		DirectX::XMFLOAT3(1.0f, 0.0f, 5.0f), // 赤色のボックス1
-		DirectX::XMFLOAT3(2.0f, 0.0f, 4.0f), // 赤色のボックス2
-		DirectX::XMFLOAT3(4.0f, 0.0f, 3.0f), // 緑色のボックス1
-		DirectX::XMFLOAT3(0.0f, 2.0f, 2.0f), // 緑色のボックス2
-		DirectX::XMFLOAT3(2.0f, 2.0f, 1.0f), // 青色のボックス1
-		DirectX::XMFLOAT3(4.0f, 2.0f, -1.0f),  // 青色のボックス2
-		 DirectX::XMFLOAT3(4.0f, 2.0f, 5.0f)  // プレイヤーのボックス
+	// 10つのボックスの初期位置を設定する配列
+	DirectX::XMFLOAT3 initialPositions[10] = {
+		DirectX::XMFLOAT3(3.0f, 0.0f, -3.0f), // B
+		DirectX::XMFLOAT3(-5.0f, 0.0f, 1.0f),// B
+		DirectX::XMFLOAT3(3.0f, 0.0f, 3.0f), // B
+		DirectX::XMFLOAT3(5.0f, 0.0f, 5.0f), // B
+
+		DirectX::XMFLOAT3(-1.0f, 0.0f, -3.0f), // G
+		DirectX::XMFLOAT3(1.0f, 0.0f, -5.0f), // G
+		DirectX::XMFLOAT3(5.0f, 0.0f, -1.0f), // G
+		DirectX::XMFLOAT3(1.0f, 0.0f, 1.0f), // G
+
+		DirectX::XMFLOAT3(-1.0f, 0.0f, -1.0f), // R
+		DirectX::XMFLOAT3(-1.0f, 0.0f, 3.0f), // R
 	};
-	// 6つのボックスを作成
-	for (int i = 0; i < 7; ++i)
+	// 10つのボックスを作成
+	for (int i = 0; i < 10; ++i)
 	{
-		Boxes* boxes = new Boxes(static_cast<BoxColor>(i % 3));
+		Boxes* boxes = new Boxes(static_cast<BoxColor>(i / 4)); // 色を設定（0-1:赤、2-5:緑、6-9:青）
 
 		// ボックスの初期位置を設定
 		boxes->SetPosition(initialPositions[i]);
@@ -90,14 +95,45 @@ void SceneGame::Initialize()
 		boxManager.Register(boxes);
 	}
 
+	{
+		// プレイヤーのボックスの初期位置を設定する配列
+		DirectX::XMFLOAT3 playerBoxInitialPosition = DirectX::XMFLOAT3(-5.0f, 0.0f, 3.0f); // プレイヤーのボックス
+
+		// プレイヤーのボックスを作成
+		Boxes* playerBox = new Boxes(static_cast<BoxColor>(BoxColor::PLAYER)); // 種類を設定
+
+		// プレイヤーのボックスの初期位置を設定
+		playerBox->SetPosition(playerBoxInitialPosition);
+
+		// プレイヤーのボックスを BoxManager に登録
+		boxManager.Register(playerBox); 
+	}
+
+	{
+		//ゴールの初期位置を設定
+		DirectX::XMFLOAT3 goalInitPos = DirectX::XMFLOAT3(5.0f, 0.0f, -3.0f);//ゴールの初期位置変数
+
+		//ゴールを作成
+		Boxes* goal = new Boxes(static_cast<BoxColor>(BoxColor::GOAL));//種類を設定
+
+		//プレイヤーのボックスの初期位置を設定
+		goal->SetPosition(goalInitPos);
+
+		//ゴールをBoxManagerに登録
+		boxManager.Register(goal);
+
+	}
+
+	
+
 	
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
 	camera.SetLoolAt(
-		DirectX::XMFLOAT3(0, 1, -1),
+		DirectX::XMFLOAT3(0, 10, 0),
 		DirectX::XMFLOAT3(0, 0, 0),
-		DirectX::XMFLOAT3(0, 1, 0)
+		DirectX::XMFLOAT3(1, 0, 0)
 		);
 	camera.SetPerspectiveFor(
 		DirectX::XMConvertToRadians(45),
@@ -171,11 +207,11 @@ void SceneGame::Update(float elapsedTime)
 	//プレイヤー更新処理
 	player->Update(elapsedTime);
 
-	//ゴール更新処理
-	goal->Update(elapsedTime);
-
 	//ボックス更新処理
 	BoxManager::Instance().Update(elapsedTime);
+
+	//ゴール更新処理
+	goal->Update(elapsedTime);
 
 	//エネミー更新処理
 	EnemyManager::Instance().Update(elapsedTime);
@@ -215,7 +251,7 @@ void SceneGame::Render()
 		//プレイヤー描画
 		player->Render(dc, shader);
 		//ゴール描画
-		goal->Render(dc, shader);
+		//goal->Render(dc, shader);
 		//エネミー描画
 		EnemyManager::Instance().Render(dc, shader);
 		//ボックス描画
@@ -223,27 +259,11 @@ void SceneGame::Render()
 
 
 		shader->End(dc);
-		
-			
 	}
 
 	//3Dエフェクト描画
 	{
 		EffectManager::Instance().Render(rc.view, rc.projection);
-	}
-
-	// 3Dデバッグ描画
-	{
-		//player->DrawDebugPrimitive();
-		////
-		//DirectX::XMFLOAT4 color = { 1.0f,  1.0f,  1.0f,  1.0f };
-		////
-		//////プレイヤーデバッグプリミティブ円柱描画
-		//graphics.GetDebugRenderer()->DrawCylinder(player->GetPosition(), player->GetRadius(), player->GetHeight(), color);
-	
-
-		////// デバッグレンダラ描画実行
-		//graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
 	}
 
 	// 2Dスプライト描画
@@ -323,7 +343,8 @@ void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc, const DirectX::XMFLOAT
 			0,
 			1, 0, 0, 1);
 	}
-
+#if false
+	
 	//エネミー配置処理
 		Mouse& mouse = Input::Instance().GetMouse();
 		if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
@@ -370,5 +391,7 @@ void SceneGame::RenderEnemyGauge(ID3D11DeviceContext* dc, const DirectX::XMFLOAT
 				enemyManager.Register(newEnemy);
 			}
 		}
+#endif // false
+
 	}
 

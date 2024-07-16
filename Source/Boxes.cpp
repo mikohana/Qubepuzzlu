@@ -21,11 +21,25 @@ Boxes::Boxes(BoxColor color) : color(color)
 		models[2].push_back(new Model("Data/Model/Boxes/BlueBox.mdl"));
 		break;
 	case BoxColor::PLAYER:
-		models[3].push_back(new Model("Data/Model/Dise/Dise/mdl"));
+		models[3].push_back(new Model("Data/Model/Dise/Dise.mdl"));
+		break;
+	case BoxColor::GOAL:
+		models[4].push_back(new Model("Data/Model/Star/Star.mdl"));
+		break;
+	case BoxColor::NONE:
+		nullptr;
 	}
 
-	//スケーリング
-	scale.x = scale.y = scale.z = 1.0f;
+	if (BoxColor::GOAL == color)
+	{
+		scale = { 0.01f,0.01f,0.01f };
+	}
+	else
+	{
+		//スケーリング
+		scale.x = scale.y = scale.z = 1.0f;
+	}
+	
 
 	//幅、高さ
 	radius = 0.5f;
@@ -34,7 +48,7 @@ Boxes::Boxes(BoxColor color) : color(color)
 
 Boxes::~Boxes()
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 5; i++)
 		for (auto model : models[i])
 			delete model;
 }
@@ -52,20 +66,31 @@ void Boxes::Update(float elapsedTime)
 
 
 
+
+#if false
 	//速力処理更新
-	UPdateVelocity(elapsedTime);
-	UpdateInvincTimer(elapsedTime);
+	if (color != BoxColor::GREEN) {
+		UPdateVelocity(elapsedTime);
+}
+#endif // false
+	if (BoxColor::GOAL != color)
+	{
+		//速力処理更新
+		UPdateVelocity(elapsedTime);
+	}
+	
+
 
 	//オブジェクト行列を更新
 	UpdateTransform();
 
 	//モデルアニメーション更新
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 5; i++)
 		for (auto model : models[i])
 			model->UpdateAnimation(elapsedTime);
 
 	//モデル行列更新
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 5; i++)
 		for (auto model : models[i])
 			model->UpdateTransform(tranceform);
 
@@ -73,8 +98,9 @@ void Boxes::Update(float elapsedTime)
 
 void Boxes::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 5; i++)
 	{
+#if false
 		//色を設定
 		DirectX::XMFLOAT4 color;
 		switch (static_cast<BoxColor>(i))
@@ -88,9 +114,13 @@ void Boxes::Render(ID3D11DeviceContext* dc, Shader* shader)
 		case BoxColor::BLUE:
 			color = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 			break;
+		case BoxColor::PLAYER:
+			color = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+			//シェーダーに色を設定
+			//shader->SetColor(color);
+
 		}
-		//シェーダーに色を設定
-		//shader->SetColor(color);
+#endif // false
 
 		//モデルを描画
 		for (auto model : models[i])

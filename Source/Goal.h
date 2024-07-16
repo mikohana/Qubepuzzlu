@@ -22,19 +22,8 @@ public:
 	//描画処理
 	void Render(ID3D11DeviceContext* dc, Shader* shader);
 
-	//デバッグ用GUI描画処理
-	//void DrawDebugGuI();
-
-	//当たり判定
-	//void DrawDebugPrimitive();
-
-	//プレイヤーとゴールとの衝突判定
-	void CollisionPlayerVsGoal();
-
-	//弾丸入力処理
-	void InputProjectile();
-
-
+	////すべてのボックスとゴールの当たり判定
+	//void CollisionBoxesVsGoal();
 
 private:
 	Model* model = nullptr;

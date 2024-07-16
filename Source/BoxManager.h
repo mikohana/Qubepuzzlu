@@ -3,6 +3,7 @@
 #include <set>
 #include "Box.h"
 #include "Boxes.h"
+#include "Goal.h"
 //ボックスマネージャー
 class  BoxManager : public Character
 {
@@ -31,11 +32,32 @@ public:
 	void DrawDebugPrimitive();
 
 	//ボックス数取得
-	int GetBoxCount() const { return static_cast<int>(boxes.size()); }
+	int GetBoxCount() const { return static_cast<int>(box.size()); }
 
 	//ボックス取得
-	Box* GetBox(int index) const { return boxes.at(index); }
+	Box* GetBox(int index) const { return box.at(index); }
 
+	//特定の種類のボックスを取得するメソッド
+	Boxes* GetBoxByColor(BoxColor color)
+	{
+		//登録されている全てのボックスを定義
+		for (Boxes* box : boxes)
+		{
+			//ボックスの色の指定された色と一致する場合、そのボックスを返す
+			if (box->GetColor() == color)
+			{
+				return box;
+			}
+		}
+		//指定された色のボックスがなかったらnullptr
+		return nullptr;
+	}
+
+	//すべてのボックスを取得するメソッド
+	std::vector<Boxes*> GetAllBoxes() const
+	{
+		return boxes;
+	}
 	//ボックス削除
 	void Remove(Box* box);
 
@@ -45,16 +67,16 @@ private:
 	//ボックス同士の衝突処理
 	void CollisionBoxVsBox();
 
-	
 	//ボックスとプレイヤーの当たり判定
 	void CollisionBoxVsPlayer();
-	//衝突判定
-	//void InstarsecCollision(Boxes* other);
+
+	//すべてのボックスとゴールの当たり判定
+	void CollisionBoxesVsGoal();
 
 	std::set<Box*> remove;
 
-	std::vector<Box*> boxes;
+	std::vector<Box*> box;
 
-
+	std::vector<Boxes*> boxes; // ボックスのリスト
 };
 

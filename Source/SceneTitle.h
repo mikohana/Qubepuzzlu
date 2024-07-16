@@ -2,6 +2,7 @@
 
 #include "Graphics/Sprite.h"
 #include "Scene.h"
+#include "Cube.h"
 
 //タイトルシーン
 class SceneTitle : public Scene
@@ -22,6 +23,9 @@ public:
    //描画処理
    void Render() override;
 
+   void Render(ID3D11DeviceContext* dc, Shader* shader);
+
 private:
 	Sprite* sprite = nullptr;
+	Cube* TitleCube = nullptr;
 };

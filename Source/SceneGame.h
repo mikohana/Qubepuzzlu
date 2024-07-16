@@ -2,6 +2,7 @@
 #include "Stage.h"
 #include "Player.h"
 #include "Scene.h"
+#include "Goal.h"
 #include "Graphics/Sprite.h"
 #include "CameraController.h"
 #include "Graphics/SkyBox.h"
@@ -101,6 +102,8 @@ private:
 	Player* player = nullptr;
 
 	Sprite* gauge = nullptr;
+
+	Goal* goal = nullptr;
 
 	CameraController* cameraController = nullptr;
 

@@ -2,7 +2,7 @@
 #include <vector>
 #include <set>
 #include "Box.h"
-
+#include "Boxes.h"
 //ボックスマネージャー
 class  BoxManager : public Character
 {
@@ -40,9 +40,16 @@ public:
 	void Remove(Box* box);
 
 
+
 private:
 	//ボックス同士の衝突処理
 	void CollisionBoxVsBox();
+
+	
+	//ボックスとプレイヤーの当たり判定
+	void CollisionBoxVsPlayer();
+	//衝突判定
+	//void InstarsecCollision(Boxes* other);
 
 	std::set<Box*> remove;
 

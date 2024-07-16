@@ -7,14 +7,25 @@
 #include "StageMain.h"
 #include "Camera.h"
 
-Boxes::Boxes()
+Boxes::Boxes(BoxColor color) : color(color)
 {
-	model = new Model("Data/Model/Cube/Cube.mdl");
-	//models[0].push_back(new Model("Data/Model/Boxes/RedBox.mdl"));
-	
+	switch (color)
+	{
+	case BoxColor::RED:
+		models[0].push_back(new Model("Data/Model/Boxes/RedBox.mdl"));
+		break;
+	case BoxColor::GREEN:
+		models[1].push_back(new Model("Data/Model/Boxes/GreenBox.mdl"));
+		break;
+	case BoxColor::BLUE:
+		models[2].push_back(new Model("Data/Model/Boxes/BlueBox.mdl"));
+		break;
+	case BoxColor::PLAYER:
+		models[3].push_back(new Model("Data/Model/Dise/Dise/mdl"));
+	}
 
 	//スケーリング
-	scale.x = scale.y = scale.z = 2.0f;
+	scale.x = scale.y = scale.z = 1.0f;
 
 	//幅、高さ
 	radius = 0.5f;
@@ -23,13 +34,15 @@ Boxes::Boxes()
 
 Boxes::~Boxes()
 {
-	delete model;
+	for (int i = 0; i < 3; i++)
+		for (auto model : models[i])
+			delete model;
 }
 
 void Boxes::Update(float elapsedTime)
 {
 	//カメラの回転角度を同期
-	Camera* camera = nullptr;
+    Camera* camera = nullptr;
 	
 
 	// 親ステージの回転角度を同期
@@ -47,22 +60,48 @@ void Boxes::Update(float elapsedTime)
 	UpdateTransform();
 
 	//モデルアニメーション更新
-	model->UpdateAnimation(elapsedTime);
+	for (int i = 0; i < 3; i++)
+		for (auto model : models[i])
+			model->UpdateAnimation(elapsedTime);
 
 	//モデル行列更新
-	model->UpdateTransform(tranceform);
+	for (int i = 0; i < 3; i++)
+		for (auto model : models[i])
+			model->UpdateTransform(tranceform);
 
 }
 
 void Boxes::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-	shader->Draw(dc, model);
+	for (int i = 0; i < 3; i++)
+	{
+		//色を設定
+		DirectX::XMFLOAT4 color;
+		switch (static_cast<BoxColor>(i))
+		{
+		case BoxColor::RED:
+			color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			break;
+		case BoxColor::GREEN:
+			color = DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+			break;
+		case BoxColor::BLUE:
+			color = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+			break;
+		}
+		//シェーダーに色を設定
+		//shader->SetColor(color);
+
+		//モデルを描画
+		for (auto model : models[i])
+		{
+			shader->Draw(dc, model);
+		}
+	}
+		
 
 	DrawDebugPrimitive();
 }
-
-
-
 
 //デバッグプリミティブ描画
 void Boxes::DrawDebugPrimitive()
@@ -74,6 +113,3 @@ void Boxes::DrawDebugPrimitive()
 
 	
 }
-
-
-

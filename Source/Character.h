@@ -94,6 +94,12 @@ private:
 	//水平移動更新処理
 	void UpdateHorizontalMove(float elapsedTime);
 
+	//カメラの回転に基づいてキャラクターの移動を調整する関数
+	void MoveWithCameraRotation(float elapsedTime);
+
+	//Camera回転角度でCharacter水平移動更新処理
+	//void UpdatePositionWithCameraRotation(float elapsedTime);
+
 protected:
 	DirectX::XMFLOAT3 position = { 0,0,0 };
 	DirectX::XMFLOAT3 angle = { 0,0,0 };

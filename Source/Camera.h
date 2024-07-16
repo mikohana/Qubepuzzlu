@@ -14,6 +14,7 @@ public:
 		static Camera camera;
 		return camera;
 	}
+	
 	//Žw’è•ûŒü‚ðŒü‚­
 	void SetLoolAt(const DirectX::XMFLOAT3& eye, const DirectX::XMFLOAT3& focus, const DirectX::XMFLOAT3& up);
 	

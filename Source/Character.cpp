@@ -2,6 +2,8 @@
 #include "Input/Input.h"
 #include "Mathf.h"
 #include "StageManager.h"
+#include <Camera.h>
+#include "CameraController.h"
 
 //行列更新処理
 void  Character::UpdateTransform()
@@ -139,17 +141,17 @@ void Character::UPdateVelocity(float elaspedTime)
 	//垂直速力更新処理
 	UpdateVerticalVelocity(elaspedFrame);
 
-	//水平速力更新処理
-	UpdateHorizontalVelocity(elaspedFrame);
-
 	//垂直移動更新処理
 	UpdateVerticalMove(elaspedTime);
+
+	//水平速力更新処理
+	UpdateHorizontalVelocity(elaspedFrame);
 
 	//水平移動更新処理
 	UpdateHorizontalMove(elaspedTime);
 
-	//SlopeMove(elaspedTime);
-
+	//CharacterじゃなくてBoxesとPlayerのみに適応するようにする
+	MoveWithCameraRotation(elaspedTime);
 
 }
 
@@ -218,6 +220,7 @@ void Character::UpdateVerticalMove(float elapsedTime)
 		isGround = false;
 	}
 
+#if false
 	//地面の向きに沿うようにXZ軸回転
 	{
 		float Euler_angleX =  atan2f(normal.z, normal.y);
@@ -238,9 +241,9 @@ void Character::UpdateVerticalMove(float elapsedTime)
 
 		
 	}
+#endif
 	
 }
-
 
 //水平速力更新処理
 void Character::UpdateHorizontalVelocity(float elapsedFrame)
@@ -250,10 +253,10 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 	if (length > 0.0f)
 	{
 		// 摩擦力
-		 float friiction = this->friiction * elapsedFrame;
+		float friiction = this->friiction * elapsedFrame;
 
-		 //空中に居る時は摩擦力を減らす
-		 if (!IsGround()) friiction *= (1.0f - airControl); // 摩擦力を30%減らす
+		//空中に居る時は摩擦力を減らす
+		if (!IsGround()) friiction *= (1.0f - airControl); // 摩擦力を30%減らす
 
 		// 摩擦力による減衰処理
 		if (length > friiction)
@@ -288,9 +291,9 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 			{
 				velocity.y -= length * slopeRate * elapsedFrame;
 			}
-			
+
 			//空中にいる時は加速力を減らす
-			if (!IsGround() )acceleration *= (1.0f - airControl);//加速力を減らす
+			if (!IsGround())acceleration *= (1.0f - airControl);//加速力を減らす
 
 			// 移動ベクトルに加速処理
 			velocity.x += (moveVecX * acceleration);
@@ -308,8 +311,6 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 		}
 	}
 
-
-
 	// 移動ベクトルをリセット
 	moveVecX = 0.0f;
 	moveVecZ = 0.0f;
@@ -326,61 +327,48 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 		float mx = velocity.x * elapsedTime;
 		float mz = velocity.z * elapsedTime;
 
-
 		// レイの開始位置と終点位置
 		DirectX::XMFLOAT3 start = { position.x, position.y + 1.0f, position.z };
 		DirectX::XMFLOAT3 end = { position.x + mx, position.y + 1.0f, position.z + mz };
-		
+
 		// レイキャストによる壁判定
 		HitResult hit;
 		if (StageManager::Instance().RayCast(start, end, hit))
 		{
 			DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start);
 			DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end);
-			DirectX::XMVECTOR Ray = DirectX::XMVectorSubtract( DirectX::XMLoadFloat3(&hit.position), End);
-		    //DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(Start, End);
+			DirectX::XMVECTOR Ray = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&hit.position), End);
 
 				//壁の法線
-				DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+			DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
 
-				//入射ベクトルを法線に射影
-				DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(Ray, Normal);
+			//入射ベクトルを法線に射影
+			DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(Ray, Normal);
 
-				//補正位置の計算
-				//法線ベクトルと進行方向のドット積を計算して、滑り幅(a)として使用
-				float a = DirectX::XMVectorGetX(Dot) * 0.01f;
+			//補正位置の計算
+			//法線ベクトルと進行方向のドット積を計算して、滑り幅(a)として使用
+			float a = DirectX::XMVectorGetX(Dot);
 
+			// 交点からの滑り先の位置を計算
+			DirectX::XMVECTOR rVec = DirectX::XMVectorAdd(End, DirectX::XMVectorScale(Normal, a * 1.8f));
+			DirectX::XMFLOAT3 R;
+			DirectX::XMStoreFloat3(&R, rVec);
 
-				// 交点からの滑り先の位置を計算
-				DirectX::XMVECTOR rVec = DirectX::XMVectorAdd(End, DirectX::XMVectorScale(Normal, a));
-				DirectX::XMFLOAT3 R;
-				DirectX::XMStoreFloat3(&R, rVec);
-
+			HitResult hitwall;
+			//hit.positionを開始位置として、Rを終点位置としてレイキャストをする
+			if (!StageManager::Instance().RayCast(hit.position, R, hitwall))
+			{
 				
-#if false
-				HitResult hitwall;
-				//hit.positionを開始位置として、Rを終点位置としてレイキャストをする
-				if (!StageManager::Instance().RayCast(hit.position,R,hitwall))
-				{
-					//当たって居なかったら
-
+				//当たったら
 				position.x = R.x;
 				position.z = R.z;
-				}
-				else
-				{
-					//当たって居たらhitwall.positionを最終的な位置として繁栄
-					position.x = hitwall.position.x;
-					position.z = hitwall.position.z;
-					
-				}
-#endif
-
-				//当たって居なかったら
-
-				position.x = R.x;
-				position.z = R.z;
-				
+			}
+			else
+			{
+				////当たって居なかったらhitwall.positionを最終的な位置として繁栄
+				position.x = hitwall.position.x;
+				position.z = hitwall.position.z;
+			}
 		}
 		else
 		{
@@ -389,5 +377,65 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 			position.z += mz;
 		}
 	}
-	
 }
+// カメラの回転に基づいてキャラクターを移動させる
+void Character::MoveWithCameraRotation(float elapsedTime)
+{
+	//カメラの回転角度を取得
+	CameraController& cameraController = CameraController::Instance();
+
+	DirectX::XMFLOAT3 cameraAngle = cameraController.GetAngle();
+
+	// カメラの回転に基づいてキャラクターの移動方向を計算
+	float moveDirectionX = cosf(DirectX::XM_PI / 2.0f - cameraAngle.x); // X軸に回転した場合、キャラクターはX方向に移動
+	float moveDirectionY = sinf(cameraAngle.y); // Y軸に回転した場合、キャラクターはY方向に移動
+	float moveDirectionZ = cosf(DirectX::XM_PI / 2.0f - cameraAngle.z); // Z軸に回転した場合、キャラクターはZ方向に移動
+
+
+	// 各軸に対応する移動量を計算
+	float moveAmountX = moveDirectionX * maxMoveSpeed * elapsedTime;
+	float moveAmountY = moveDirectionY * maxMoveSpeed * elapsedTime;
+	float moveAmountZ = moveDirectionZ * maxMoveSpeed * elapsedTime;
+
+	// キャラクターの位置を更新
+	position.x += moveAmountX;
+	position.y += moveAmountY;
+	position.z += moveAmountZ;
+
+}
+
+
+//
+//
+//void Character::UpdatePositionWithCameraRotation(float elapsedTime)
+//{
+//	//インスタンス変数
+//	CameraController& cameracontroller = CameraController::Instance();
+//
+//	//カメラコントローラーの回転角度取得
+//	DirectX::XMFLOAT3 cameraRotation = cameracontroller.GetAngle();
+//
+//	//カメラの回転角度に基づいて移動ベクトルを計算
+//	DirectX::XMFLOAT3 moveDirection = { velocity.x, 0.0f, velocity.z };
+//	DirectX::XMVECTOR moveDirectionVec = DirectX::XMLoadFloat3(&moveDirection);
+//
+//	//カメラのy軸周りの回転を表す行列を作成
+//	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationY(cameraRotation.y);
+//
+//	//移動方向を回転させる
+//	DirectX::XMVECTOR rotatedMoveDirectionVec = DirectX::XMVector3Transform(moveDirectionVec, rotationMatrix);
+//
+//	//結果をXMFLOAT3に戻す
+//	DirectX::XMFLOAT3 rotatedMoveDirection;
+//	DirectX::XMStoreFloat3(&rotatedMoveDirection, rotatedMoveDirectionVec);
+//
+//	//水平移動値
+//	float mx = rotatedMoveDirection.x * elapsedTime;
+//	float mz = rotatedMoveDirection.z * elapsedTime;
+//
+//	//壁に当たっていない場合、通常の移動
+//	position.x += mx;
+//	position.z += mz;
+//}
+//
+//

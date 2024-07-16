@@ -42,36 +42,36 @@
 //球vs球
 bool Collision::IntrresectVsSphere(const DirectX::XMFLOAT3& positionA, float radiusA, const DirectX::XMFLOAT3& positionB, float radiusB, DirectX::XMFLOAT3& outPositionB)
 {
-	// A→Bの単位ベクトルを計算
-	DirectX::XMVECTOR PositionA = DirectX::XMLoadFloat3(&positionA);
-	DirectX::XMVECTOR PositionB = DirectX::XMLoadFloat3(&positionB);
-	DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(PositionB, PositionA);
-	DirectX::XMVECTOR LengthSq = DirectX::XMVector3LengthSq(Vec); // 距離の二乗を計算
-	float lengthSq;
-	DirectX::XMStoreFloat(&lengthSq, LengthSq);
+    // A→Bの単位ベクトルを計算
+    DirectX::XMVECTOR PositionA = DirectX::XMLoadFloat3(&positionA);
+    DirectX::XMVECTOR PositionB = DirectX::XMLoadFloat3(&positionB);
+    DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(PositionB, PositionA);
+    DirectX::XMVECTOR LengthSq = DirectX::XMVector3LengthSq(Vec); // 距離の二乗を計算
+    float lengthSq;
+    DirectX::XMStoreFloat(&lengthSq, LengthSq);
 
-	// 距離判定用変数
-	float combinedRadius = radiusA + radiusB;
-	float range = combinedRadius * combinedRadius;
+    // 距離判定用変数
+    float combinedRadius = radiusA + radiusB;
+    float range = combinedRadius * combinedRadius;
 
-	// 交差していなければ押し出さない場合
-	if (lengthSq > range)
-	{
-		return false;
-	}
+    // 交差していなければ押し出さない場合
+    if (lengthSq > range)
+    {
+        return false;
+    }
 
-	// 交差していればAがBを押し出す
-	float distance = sqrt(lengthSq); // 距離を計算
-	float overlap = range - lengthSq; // 交差量を計算
+    // 交差していればAがBを押し出す
+    float distance = sqrt(lengthSq); // 距離を計算
+    float overlap = range - lengthSq; // 交差量を計算
 
-	// Bを押し出す方向のベクトルを計算
-	DirectX::XMVECTOR direction = DirectX::XMVector3Normalize(Vec);
+    // Bを押し出す方向のベクトルを計算
+    DirectX::XMVECTOR direction = DirectX::XMVector3Normalize(Vec);
 
-	// AがBを押し出す
-	DirectX::XMVECTOR newPositionB = DirectX::XMVectorAdd(PositionB, DirectX::XMVectorScale(direction, overlap));
-	DirectX::XMStoreFloat3(&outPositionB, newPositionB);
+    // AがBを押し出す
+    DirectX::XMVECTOR newPositionB = DirectX::XMVectorAdd(PositionB, DirectX::XMVectorScale(direction, overlap));
+    DirectX::XMStoreFloat3(&outPositionB, newPositionB);
 
-	return true;
+    return true;
 }
 //円柱vs円柱
 bool Collision::IntersecCylinderVsCylinder(const DirectX::XMFLOAT3& positionA, float radiusA, float heightA, const DirectX::XMFLOAT3& positionB, float radiusB, float heightB, DirectX::XMFLOAT3& outPositionB)
@@ -82,7 +82,7 @@ bool Collision::IntersecCylinderVsCylinder(const DirectX::XMFLOAT3& positionA, f
         return false;
     }
     // Aの頭がBの足元より下なら当たっていない
-    if (positionA.y + heightA< positionB.y )
+    if (positionA.y + heightA < positionB.y)
     {
         return false;
     }
@@ -95,7 +95,7 @@ bool Collision::IntersecCylinderVsCylinder(const DirectX::XMFLOAT3& positionA, f
     float combinedRadius = radiusA + radiusB; // 距離判定用変数
     float distanceXZ = sqrt(dx * dx + dz * dz); // 距離の計算
 
-  
+
 
     // 交差していなければ押し出さない場合
     if (distanceXZ > combinedRadius)
@@ -119,7 +119,7 @@ bool Collision::InstarsecSphereVsCylinder(const DirectX::XMFLOAT3& spherePositio
     DirectX::XMVECTOR SpherePosition = DirectX::XMLoadFloat3(&spherePosition);
     DirectX::XMVECTOR CylinderPosition = DirectX::XMLoadFloat3(&cylinderPosition);
     DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(SpherePosition, CylinderPosition);
-    
+
     //ベクトルの長さの二乗を計算
     DirectX::XMVECTOR LengtSq = DirectX::XMVector3LengthSq(Vec);
     float lengthSq;
@@ -136,7 +136,7 @@ bool Collision::InstarsecSphereVsCylinder(const DirectX::XMFLOAT3& spherePositio
 
     // 円柱の高さを考慮した判定
     // 円柱の側面に接触しているか、または円柱の上部・下部に衝突しているか判断
-    DirectX::XMVECTOR CylinderHeightVec = DirectX::XMVectorSet(0.0f,cylinderHeight,0.0f,0.0f);// 円柱の高さを表すベクトルを設定
+    DirectX::XMVECTOR CylinderHeightVec = DirectX::XMVectorSet(0.0f, cylinderHeight, 0.0f, 0.0f);// 円柱の高さを表すベクトルを設定
     DirectX::XMVECTOR CylinderHalfHeightVec = DirectX::XMVectorScale(CylinderHeightVec, 0.5f);// 上と下の区別をつけるための変数
     DirectX::XMVECTOR CylinderTopVec = DirectX::XMVectorAdd(CylinderPosition, CylinderHalfHeightVec);//+;
     DirectX::XMVECTOR CylinderBottomVec = DirectX::XMVectorSubtract(CylinderPosition, CylinderHalfHeightVec);//-;
@@ -150,7 +150,7 @@ bool Collision::InstarsecSphereVsCylinder(const DirectX::XMFLOAT3& spherePositio
     //2点間距離
     float distanceToTopSq, distanceToBottomSq;
     DirectX::XMStoreFloat(&distanceToTopSq, DistanceToTopSq);
-    DirectX::XMStoreFloat(&distanceToBottomSq,DistanceToBottom);
+    DirectX::XMStoreFloat(&distanceToBottomSq, DistanceToBottom);
 
     // 球が円柱の上部または下部に接触しているか、または円柱の側面に接触しているかを判断
     if (distanceToTopSq <= combineRadiusSq || distanceToBottomSq <= combineRadiusSq)
@@ -163,25 +163,25 @@ bool Collision::InstarsecSphereVsCylinder(const DirectX::XMFLOAT3& spherePositio
     DirectX::XMVECTOR CylinderSideVec = DirectX::XMVectorSet(0.0f, 0.0f, cylinderRadius, 0.0f);
     DirectX::XMVECTOR DistanceToSide = DirectX::XMVectorSubtract(SpherePosition, CylinderSideVec);
     DirectX::XMVECTOR DistanceToSizeSq = DirectX::XMVector3Length(DistanceToSide);
-    
+
     float distanceToSizeSq;
     DirectX::XMStoreFloat(&distanceToSizeSq, DistanceToSizeSq);
     // 球が円柱の側面に接触しているかを判断
     if (distanceToSizeSq <= combineRadiusSq)
     {
-       //円柱の側面に対する球のベクトルを計算
+        //円柱の側面に対する球のベクトルを計算
         DirectX::XMVECTOR DistanceToSideVec = DirectX::XMVectorSubtract(SpherePosition, CylinderSideVec);
         DirectX::XMVECTOR DistanceToSideVecNormalized = DirectX::XMVector3Normalize(DistanceToSideVec);
 
-       //球が円柱の側面に接触している場合の移動量を計算
+        //球が円柱の側面に接触している場合の移動量を計算
         float overlap = sqrt(combineRadiusSq) - sqrt(distanceToSizeSq);
 
         //球を円柱から話すための移動量を計算
         DirectX::XMVECTOR MoveVec = DirectX::XMVectorScale(DistanceToSideVecNormalized, overlap);
 
         //円柱の新しい位置を計算
-        DirectX::XMVECTOR NewCylinderPosition = DirectX::XMVectorAdd(CylinderPosition,MoveVec);
-        
+        DirectX::XMVECTOR NewCylinderPosition = DirectX::XMVectorAdd(CylinderPosition, MoveVec);
+
         //新しい位置をoutCylinderPositionに格納
         DirectX::XMStoreFloat3(&outCylinderPosition, NewCylinderPosition);
 
@@ -368,7 +368,7 @@ bool Collision::InstarsecCubeVsCube(const DirectX::XMFLOAT3& cubeA_Position, flo
         max1.z >= min2.z && min1.z <= max2.z) {
         // 重なっている場合、押し出し処理を行う
 
-      
+
 
         // 衝突している辺の長さを計算
         float overlapX = min(max1.x, max2.x) - max(min1.x, min2.x);

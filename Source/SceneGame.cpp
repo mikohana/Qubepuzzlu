@@ -34,6 +34,7 @@ Viewport ConvertD3D11ViewportToViewport(const D3D11_VIEWPORT& d3dViewport)
 // 初期化
 void SceneGame::Initialize()
 {
+
 	//ステージ初期S化
 	StageManager&  stageManager = StageManager::Instance();
 	StageMain* stageMain = new StageMain();
@@ -191,8 +192,8 @@ void SceneGame::Finalize()
 	
 	//ステージ終了化
 	StageManager::Instance().Clear();
-	
-	
+
+			
 }
 
 // 更新処理

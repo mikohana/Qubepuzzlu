@@ -191,8 +191,8 @@ void SceneGame::Finalize()
 	
 	//ステージ終了化
 	StageManager::Instance().Clear();
-	
-	
+
+			
 }
 
 // 更新処理
